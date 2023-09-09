@@ -1,8 +1,6 @@
-import { StarIcon } from '../../../Components/Icons/StarIcon';
-
 import './styles.css';
 
-const brands = ['Saab', 'Volvo', 'BMW', 'Skoda', 'Mercedes'];
+// const brands = ['Saab', 'Volvo', 'BMW', 'Skoda', 'Mercedes'];
 
 const cars = [
   { id: 1, make: 'Saab', model: '92B', year: 1953, owner: 'Jon' },

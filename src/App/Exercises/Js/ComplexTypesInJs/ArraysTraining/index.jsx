@@ -14,14 +14,14 @@ export function ArraysTraining() {
   const filteredUsers = () => userList.filter((user) => user.age >= 30);
 
   // Przykładowe użycie funkcji sort() - sortuj użytkowników według wieku
-  const sortedUsers = [...userList].sort((a, b) => a.age - b.age);
+  // const sortedUsers = [...userList].sort((a, b) => a.age - b.age);
 
   // Przykładowe użycie funkcji map - połącz imiona użytkowników w jedną ciąg znaków
-  const joinedNames = userList.map((user) => user.name);
+  // const joinedNames = userList.map((user) => user.name);
 
   // Przykładowe użycie funkcji reduce() - oblicz średnią wieku użytkowników
-  const averageAge =
-    userList.reduce((total, user) => total + user.age, 0) / userList.length;
+  // const averageAge =
+  //   userList.reduce((total, user) => total + user.age, 0) / userList.length;
 
   // console.log(sortedUsers);
 
