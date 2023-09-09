@@ -26,7 +26,7 @@ export function ComplexTypesInJs() {
 
   const arrayOfString = ['audi', 'mercedes', 'tesla', 'bmw'];
 
-  const [first, second, ...rest] = arrayOfString;
+  const [first, ...rest] = arrayOfString;
 
   const { age, name } = personalData;
 
