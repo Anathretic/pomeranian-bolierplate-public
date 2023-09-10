@@ -23,23 +23,51 @@ export const Block22Warmup = () => {
   console.log(concatArr([1, 2], [3, 4]));
 
   // Zadanie 2 -----------------------------------------
+
+  // Dla 1 imienia - do przeróbki dla 2
   function nameMarks(val1, ...val2) {
     let overall = 0;
     const output = {};
-    for (const { letter, score } of val2) {
-      output[letter] ??= 0;
-      output[letter] += score;
-
-      if (val1.toLowerCase().includes(letter.toLowerCase())) {
-        overall += score;
-      } else {
-        console.log(false);
+    const test = () => {
+      for (const { letter, score } of val2) {
+        output[letter] ??= 0;
+        output[letter] += score;
+  
+        if (val1.toUpperCase().includes(letter)) {
+          overall += score;
+        } else {
+          console.log(false);
+        }
       }
     }
+    // val1.map((test) => test.test())
     console.log({ name: val1, score: overall });
   }
 
-  nameMarks('Ewelina', ...arr);
+  nameMarks(['Ewelina'], ...arr);
+
+  // Dla tablicy imion
+  const getWeight = (letter, wagi) => {
+    const found = wagi.find((w) => w.letter === letter);
+    return found ? found.score : 0;
+  };
+
+  const calculateScore = (name, wagi) => {
+    return [...name].reduce(
+      (prev, letter) => prev + getWeight(letter, wagi),
+      0
+    );
+  };
+
+  const imionaWagi = (imiona, wagi) => {
+    const result = imiona.map((name) => ({
+      name: name,
+      score: calculateScore(name.toUpperCase(), wagi),
+    }));
+    return JSON.stringify(result);
+  };
+
+  imionaWagi(['Ewa', 'Anna'], arr);
 
   return (
     <article>
