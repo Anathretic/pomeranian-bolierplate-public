@@ -24,29 +24,56 @@ export const Block22Warmup = () => {
 
   // Zadanie 2 -----------------------------------------
 
-  // Dla 1 imienia - do przeróbki dla 2
-  function nameMarks(val1, ...val2) {
-    let overall = 0;
+  // Dla tablicy imion
+  function nameMarks(names, ...letters) {
+    let data = [];
+    let overall = [0];
+
     const output = {};
-    const test = () => {
-      for (const { letter, score } of val2) {
+
+    names.map((name) => {
+      for (const { letter, score } of letters) {
         output[letter] ??= 0;
         output[letter] += score;
-  
-        if (val1.toUpperCase().includes(letter)) {
-          overall += score;
-        } else {
-          console.log(false);
+
+        if (name.toUpperCase().includes(letter)) {
+          overall.push(score);
         }
       }
-    }
-    // val1.map((test) => test.test())
-    console.log({ name: val1, score: overall });
+
+      const sumIt = overall.reduce(
+        (accValue, currValue) => accValue + currValue,
+        0
+      );
+
+      const result = {
+        name: name,
+        score: sumIt,
+      };
+      data.push(result);
+      overall = [0];
+    });
+
+    data.sort((x, y) => (x.score < y.score ? 1 : x.score > y.score ? -1 : 0));
+
+    return JSON.stringify(data);
   }
 
-  nameMarks(['Ewelina'], ...arr);
+  nameMarks(
+    [
+      'Ewelina',
+      'Agnieszka',
+      'Jan',
+      'Iga',
+      'Katarzyna',
+      'Anna',
+      'Klaudia',
+      'Maria',
+    ],
+    ...arr
+  );
 
-  // Dla tablicy imion
+  // Dla tablicy imion - sposób trenera
   const getWeight = (letter, wagi) => {
     const found = wagi.find((w) => w.letter === letter);
     return found ? found.score : 0;
@@ -111,6 +138,24 @@ export const Block22Warmup = () => {
           wynik{' '}
           <code>{`[{name: "janek", score: 20}, {name:
 "zosia", score: 13}]`}</code>
+        </p>
+        <p>
+          Wynik:{' '}
+          <code>
+            {nameMarks(
+              [
+                'Ewelina',
+                'Agnieszka',
+                'Jan',
+                'Iga',
+                'Katarzyna',
+                'Anna',
+                'Klaudia',
+                'Maria',
+              ],
+              ...arr
+            )}
+          </code>
         </p>
       </section>
     </article>
