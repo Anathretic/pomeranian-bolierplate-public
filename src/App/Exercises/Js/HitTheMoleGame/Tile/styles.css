@@ -10,14 +10,14 @@
   height: 100%;
 }
 
-.mole-tile-correct {
-  background-color: #e2fbd7;
+.mole-tile-neutral {
+  background-color: #ebebeb;
 }
 
-.mole-tile-incorrect {
+.mole-tile:active {
   background-color: #f3aea8;
 }
 
-.mole-tile-neutral {
-  background-color: #ebebeb;
+.mole-with-mole:active {
+  background-color: #e2fbd7;
 }
