@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-
-import { Button } from '../../../Components/Button';
-
+import { Button, OptionButton } from '../../../Components/Button';
 import { MainHeader } from '../../../Components/MainHeader';
+import { TimeTracker } from '../../../Components/TimeTracker';
 
 import './style.css';
 
@@ -24,7 +23,6 @@ export const HitTheMoleGame = () => {
   const [status, setStatus] = useState('notStarted');
   const [score, setScore] = useState(0);
   const [duration, setDuration] = useState(MINUTE);
-  const [getTimeLeft, setTimeLeft] = useState(0);
   const [resultTime, setResultTime] = useState(0);
   const [molesNo, setMolesNo] = useState(1);
   const [moles, setMoles] = useState([]);
@@ -90,8 +88,6 @@ export const HitTheMoleGame = () => {
   };
 
   const getDecrementTime = () => {
-    setTimeLeft(`${getMinutes}:${getSeconds} s`);
-
     if (getMinutes <= 0 && getSeconds <= 0) {
       setStatus('finished');
       setIsActiveTimer(false);
@@ -134,7 +130,6 @@ export const HitTheMoleGame = () => {
   const handleStop = () => {
     setStatus('finished');
     setIsActiveTimer(false);
-    setTimeLeft(`${getMinutes}:${getSeconds} s`);
     setResultTime(
       `${getGameMinutesByGameMode()}m : ${
         getSeconds === 0 ? '0' : 60 - getSeconds
@@ -205,17 +200,15 @@ export const HitTheMoleGame = () => {
         <>
           <div className="mole-settings-container">
             <span className="mole-label">czas gry</span>
-            <Button
-              id="1"
-              variant={duration !== MINUTE ? 'primary' : 'secondary'}
+            <OptionButton
+              isSelected={duration !== MINUTE}
               onClick={() => {
                 setDuration(MINUTE);
-
                 setMinutes(MINUTE);
               }}
             >
               1 minuta
-            </Button>
+            </OptionButton>
             <Button
               variant={duration !== 2 * MINUTE ? 'primary' : 'secondary'}
               onClick={() => {
@@ -267,7 +260,9 @@ export const HitTheMoleGame = () => {
           <div className="mole-settings-container">
             <span className="mole-label">przyciski sterujące</span>
 
-            <span className="mole-output">{getTimeLeft}</span>
+            <span className="mole-output">
+              {<TimeTracker time={getMinutes * 60 + getSeconds} />}
+            </span>
           </div>
           <div className="mole-settings-container">
             <span className="mole-label">Wynik</span>

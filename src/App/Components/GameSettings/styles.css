@@ -1,0 +1,35 @@
+.game-settings-container {
+  display: flex;
+  margin-bottom: 1em;
+  column-gap: 1.5rem;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.game-settings-container-error {
+  background-color: #f3aea8;
+}
+
+.game-label {
+  text-transform: uppercase;
+  flex-basis: 12rem;
+}
+
+.game-label-error {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1rem;
+  text-transform: lowercase;
+  
+}
+
+.game-output {
+  min-width: 10.2rem;
+  display: flex;
+  height: 3.5rem;
+  padding: 1.25rem 2.25rem;
+  justify-content: center;
+  align-items: center;
+  background: #ebebeb;
+}
