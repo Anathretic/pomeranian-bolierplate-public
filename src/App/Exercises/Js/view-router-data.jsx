@@ -14,6 +14,7 @@ import { blockRouterMetaData as blockRouterMetaDataSetTimeout } from './SetTimeo
 import { blockRouterMetaData as blockRouterMetaDataVanishString } from './VanishString/router-data';
 import { blockRouterMetaData as blockRouterMetaDataHitTheMoleGame } from './HitTheMoleGame/router-data';
 import { blockRouterMetaData as blockRouterMetaDataMemoGame } from './MemoGame/router-data';
+import { blockRouterMetaData as blockRouterMetaDataJsPrototypes } from './JsPrototypes/router-data';
 
 export const blockRouterMetaData = [
   blockRouterMetaDataJsVariables1,
@@ -30,5 +31,6 @@ export const blockRouterMetaData = [
   blockRouterMetaDataVanishString,
   blockRouterMetaDataHitTheMoleGame,
   blockRouterMetaDataMemoGame,
+  blockRouterMetaDataJsPrototypes,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
