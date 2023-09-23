@@ -17,6 +17,7 @@ import { blockRouterMetaData as blockRouterMetaDataMemoGame } from './MemoGame/r
 import { blockRouterMetaData as blockRouterMetaDataJsPrototypes } from './JsPrototypes/router-data';
 import { blockRouterMetaData as blockRouterMetaDataObjectOrientedProgramming } from './ObjectOrientedProgramming/router-data';
 import { blockRouterMetaData as blockRouterMetaDataObjectOrientedProgrammingExercises } from './ObjectOrientedProgrammingExercises/router-data';
+import { blockRouterMetaData as blockRouterMetaDataJsonXmlStorage } from './JsonXmlStorage/router-data';
 
 export const blockRouterMetaData = [
   blockRouterMetaDataJsVariables1,
@@ -36,5 +37,6 @@ export const blockRouterMetaData = [
   blockRouterMetaDataJsPrototypes,
   blockRouterMetaDataObjectOrientedProgramming,
   blockRouterMetaDataObjectOrientedProgrammingExercises,
+  blockRouterMetaDataJsonXmlStorage,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
