@@ -160,7 +160,6 @@ export function ObjectOrientedProgrammingExercises() {
   return (
     <div>
       <h1>OOP - zadania</h1>
-      <h2>Zadanie 1</h2>
     </div>
   );
 }
