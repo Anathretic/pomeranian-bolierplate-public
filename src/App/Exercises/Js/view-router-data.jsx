@@ -15,6 +15,8 @@ import { blockRouterMetaData as blockRouterMetaDataVanishString } from './Vanish
 import { blockRouterMetaData as blockRouterMetaDataHitTheMoleGame } from './HitTheMoleGame/router-data';
 import { blockRouterMetaData as blockRouterMetaDataMemoGame } from './MemoGame/router-data';
 import { blockRouterMetaData as blockRouterMetaDataJsPrototypes } from './JsPrototypes/router-data';
+import { blockRouterMetaData as blockRouterMetaDataObjectOrientedProgramming } from './ObjectOrientedProgramming/router-data';
+import { blockRouterMetaData as blockRouterMetaDataObjectOrientedProgrammingExercises } from './ObjectOrientedProgrammingExercises/router-data';
 
 export const blockRouterMetaData = [
   blockRouterMetaDataJsVariables1,
@@ -32,5 +34,7 @@ export const blockRouterMetaData = [
   blockRouterMetaDataHitTheMoleGame,
   blockRouterMetaDataMemoGame,
   blockRouterMetaDataJsPrototypes,
+  blockRouterMetaDataObjectOrientedProgramming,
+  blockRouterMetaDataObjectOrientedProgrammingExercises,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
