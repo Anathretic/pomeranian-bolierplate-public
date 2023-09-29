@@ -6,20 +6,21 @@ import { TimeTracker } from '../../../Components/TimeTracker';
 import './style.css';
 
 import { Tile } from './Tile/Tile';
+import {
+  GameSettings,
+  GameSettingsOutput,
+} from '../../../Components/GameSettings';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
 const MINUTE = 1; //1 minuta
-
 const MOLES_SPEED = [3000, 2000, 1000];
+const BUTTON_VARIANTS = [1, 2, 3];
 
 export const HitTheMoleGame = () => {
-  // notStarted, started, finished
-
-  //getter i setter
-
+  //getter i setter - destrukturyzacja useState()
   const [status, setStatus] = useState('notStarted');
   const [score, setScore] = useState(0);
   const [duration, setDuration] = useState(MINUTE);
@@ -28,9 +29,9 @@ export const HitTheMoleGame = () => {
   const [moles, setMoles] = useState([]);
   const [molesTimeouts, setMolesTimeouts] = useState({});
   const [tiles, setTiles] = useState([]);
-  const [getMinutes, setMinutes] = useState(MINUTE);
-  const [getSeconds, setSeconds] = useState(0);
-  const [getIsActiveTimer, setIsActiveTimer] = useState(false); // Flaga aktywności licznika
+  const [minutes, setMinutes] = useState(MINUTE);
+  const [seconds, setSeconds] = useState(0);
+  const [isActiveTimer, setIsActiveTimer] = useState(false);
 
   const createMole = (newMoles, id) => {
     const maxPosition = molesNo * 5 + 5;
@@ -81,19 +82,19 @@ export const HitTheMoleGame = () => {
 
         const newMole = createMole(newMolesPositions, currentMole.id);
         newMolesPositions.push(newMole);
-        console.log(JSON.stringify(newMole), new Date().toISOString());
         return newMolesPositions;
       }
     });
   };
 
   const getDecrementTime = () => {
-    if (getMinutes <= 0 && getSeconds <= 0) {
+    if (minutes <= 0 && seconds <= 0) {
       setStatus('finished');
       setIsActiveTimer(false);
+      setResultTime(`${duration}:00`);
     }
 
-    if (getSeconds === 0) {
+    if (seconds === 0) {
       setMinutes((prevMinutes) => prevMinutes - 1);
       setSeconds(59);
     } else {
@@ -105,14 +106,14 @@ export const HitTheMoleGame = () => {
   useEffect(() => {
     let timerInterval;
 
-    if (getIsActiveTimer) {
+    if (isActiveTimer) {
       timerInterval = setInterval(getDecrementTime, 1000);
     }
 
     return () => {
       clearInterval(timerInterval);
     };
-  }, [getIsActiveTimer, getSeconds, getMinutes]);
+  }, [isActiveTimer, seconds, minutes]);
 
   const handleStart = () => {
     setStatus('started');
@@ -125,16 +126,10 @@ export const HitTheMoleGame = () => {
     shuffleMoles();
   };
 
-  // uchwyt dla eventu JS i React
-
   const handleStop = () => {
     setStatus('finished');
     setIsActiveTimer(false);
-    setResultTime(
-      `${getGameMinutesByGameMode()}m : ${
-        getSeconds === 0 ? '0' : 60 - getSeconds
-      }s`
-    );
+    setResultTime(resultTimeGuard());
 
     setMolesTimeouts((prevTimeouts) => {
       for (const index in prevTimeouts) {
@@ -161,26 +156,27 @@ export const HitTheMoleGame = () => {
     }
   };
 
-  const getGameMinutesByGameMode = () => {
-    let timeResult = '';
-
-    if (getMinutes === 0 || getMinutes === 1 || getMinutes === 2) {
-      timeResult = '0';
-    } else if (getMinutes === 1) {
-      timeResult = '0';
-    } else if (getMinutes === 2) {
-      timeResult = '0';
-    } else {
-      timeResult = duration - getMinutes;
-    }
-
-    return timeResult;
-  };
-
   const getInitialTiles = () => {
     return Array(molesNo * 5 + 5)
       .fill(0)
       .map((_, index) => ({ index }));
+  };
+
+  const resultTimeGuard = () => {
+    let result;
+    let min;
+    let sec;
+    minutes > 0 && seconds === 0
+      ? (min = duration - minutes)
+      : (min = duration - minutes - 1);
+    seconds === 0
+      ? (sec = '00')
+      : (sec =
+          60 - seconds <= 9
+            ? (sec = `0${60 - seconds}`)
+            : (sec = `${60 - seconds}`));
+    result = `${min}:${sec}`;
+    return result;
   };
 
   return (
@@ -192,88 +188,60 @@ export const HitTheMoleGame = () => {
       </p>
       {status === 'finished' && (
         <div className="mole-result">
-          Gratulację! Twój wynik to {score} złapane krety w czasie {resultTime}{' '}
-          !
+          Gratulację! Twój wynik to {score} złapane krety w czasie {resultTime}!
         </div>
       )}
       {status !== 'started' && (
         <>
-          <div className="mole-settings-container">
-            <span className="mole-label">czas gry</span>
-            <OptionButton
-              isSelected={duration !== MINUTE}
-              onClick={() => {
-                setDuration(MINUTE);
-                setMinutes(MINUTE);
-              }}
-            >
-              1 minuta
-            </OptionButton>
-            <Button
-              variant={duration !== 2 * MINUTE ? 'primary' : 'secondary'}
-              onClick={() => {
-                setDuration(2 * MINUTE);
-
-                setMinutes(2 * MINUTE);
-              }}
-            >
-              2 minuty
+          <GameSettings label="czas gry">
+            {BUTTON_VARIANTS.map((timeValue) => (
+              <OptionButton
+                key={timeValue}
+                isSelected={duration !== timeValue}
+                onClick={() => {
+                  setDuration(timeValue);
+                  setMinutes(timeValue);
+                }}
+              >
+                {timeValue} min
+              </OptionButton>
+            ))}
+          </GameSettings>
+          <GameSettings label="liczba kretów">
+            {BUTTON_VARIANTS.map((moleValue) => (
+              <OptionButton
+                key={moleValue + 10}
+                isSelected={molesNo !== moleValue}
+                onClick={() => setMolesNo(moleValue)}
+              >
+                {moleValue}
+              </OptionButton>
+            ))}
+          </GameSettings>
+          <GameSettings label="przyciski sterujące">
+            <Button onClick={handleStart} variant="tertiary">
+              Start
             </Button>
-            <Button
-              variant={duration !== 3 * MINUTE ? 'primary' : 'secondary'}
-              onClick={() => setDuration(3 * MINUTE)}
-            >
-              3 minuty
-            </Button>
-          </div>
-          <div className="mole-settings-container">
-            <span className="mole-label">liczba kretów</span>
-            <Button
-              variant={molesNo !== 1 ? 'primary' : 'secondary'}
-              onClick={() => setMolesNo(1)}
-            >
-              1 kret
-            </Button>
-            <Button
-              variant={molesNo !== 2 ? 'primary' : 'secondary'}
-              onClick={() => setMolesNo(2)}
-            >
-              2 krety
-            </Button>
-            <Button
-              variant={molesNo !== 3 ? 'primary' : 'secondary'}
-              onClick={() => setMolesNo(3)}
-            >
-              3 krety
-            </Button>
-          </div>
-          <div className="mole-settings-container">
-            <span className="mole-label">przyciski sterujące</span>
-            <Button onClick={handleStart}>Start</Button>
-          </div>
+          </GameSettings>
         </>
       )}
 
       {/* conditional rendering of jsx w React  */}
       {status === 'started' && (
         <>
-          <div className="mole-settings-container">
-            <span className="mole-label">przyciski sterujące</span>
-
-            <span className="mole-output">
-              {<TimeTracker time={getMinutes * 60 + getSeconds} />}
-            </span>
-          </div>
-          <div className="mole-settings-container">
-            <span className="mole-label">Wynik</span>
-            <span className="mole-output">{score}</span>
-          </div>
-          <div className="mole-settings-container">
-            <span className="mole-label">Przyciski sterujące</span>
+          <GameSettings label="czas gry">
+            <GameSettingsOutput>
+              {<TimeTracker time={minutes * 60 + seconds} />}
+            </GameSettingsOutput>
+          </GameSettings>
+          <GameSettings label="wynik">
+            <GameSettingsOutput>{score}</GameSettingsOutput>
+          </GameSettings>
+          <GameSettings label="przyciski sterujące">
             <Button onClick={handleStop} variant="tertiary">
               Stop
             </Button>
-          </div>
+          </GameSettings>
           <div className="mole-tile-board">
             {tiles.map(({ index }) => (
               <Tile
