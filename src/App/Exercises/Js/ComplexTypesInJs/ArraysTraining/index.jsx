@@ -6,6 +6,10 @@ const userList = [
   { id: 5, name: 'Ewa', age: 32 },
 ];
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Trik na losowe wartości -> array.sort(() => Math.random(array.length - 0.5)) //
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 export function ArraysTraining() {
   // Przykładowe użycie funkcji find() - znajdź użytkownika o określonym ID
   const foundUser = userList.find((user) => user.id === 3);
