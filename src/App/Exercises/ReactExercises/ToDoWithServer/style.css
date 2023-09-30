@@ -1,0 +1,27 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.form {
+  max-width: 500px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form textarea {
+  min-height: 150px;
+  max-height: 250px;
+  resize: vertical;
+}
+
+.todo-container {
+    padding: 1rem;
+    margin: 1rem 0;
+    max-width: 500px;
+    border: 2px solid black;
+}
