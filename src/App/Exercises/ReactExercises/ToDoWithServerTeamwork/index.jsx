@@ -19,7 +19,8 @@ export const TodoWithServerTeamwork = () => {
 
     RequestHandler('GET')
       .then((res) => {
-        console.log(res), setData(res);
+        console.log(res);
+        setData(res);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));

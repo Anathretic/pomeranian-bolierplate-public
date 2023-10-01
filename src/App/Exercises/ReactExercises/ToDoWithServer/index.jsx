@@ -110,7 +110,8 @@ export const TodoWithServer = () => {
                 <form
                   className="form"
                   onSubmit={(e) => {
-                    e.preventDefault(), editTodo(todo.id);
+                    e.preventDefault();
+                    editTodo(todo.id);
                   }}
                 >
                   <div className="form-container">
