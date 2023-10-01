@@ -1,141 +1,89 @@
 import { useState, useEffect } from 'react';
+import { RequestHandler } from './helpers';
 
 import './style.css';
+
+// IT'S OWN VERSION OF EXERCISE SO IT WON'T BE REFACTORED LIKE TEAMWORK TO REMEMBER OF DIFFERENT SOLUTIONS
 
 export const TodoWithServer = () => {
   const [todos, setTodos] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(false);
-  const [edit, setEdit] = useState(0);
+  const [edit, setEdit] = useState('');
   const [appStatus, setAppStatus] = useState(true);
 
-  const [newTitle, setNewTitle] = useState('');
-  const [newAuthor, setNewAuthor] = useState('');
-  const [newNote, setNewNote] = useState('');
+  const [values, setValues] = useState({
+    title: '',
+    author: '',
+    note: '',
+  });
+
+  const handleValue = (e, key) => {
+    setValues({
+      ...values,
+      [key]: e.target.value,
+    });
+  };
 
   const clearInputs = () => {
-    setNewTitle('');
-    setNewAuthor('');
-    setNewNote('');
+    setValues({
+      title: '',
+      author: '',
+      note: '',
+    });
     setError('');
   };
 
-  const fetchTodos = async () => {
-    try {
-      const response = await fetch('http://localhost:3333/api/todo');
-
-      if (!response.ok) {
-        throw new Error('Wystąpił błąd pobierania listy!');
-      }
-
-      const jsonData = await response.json();
-      setTodos(jsonData);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setError('fetch');
-      setLoading(false);
-    }
+  const fetchTodos = () => {
+    RequestHandler('GET')
+      .then((res) => {
+        setTodos(res);
+      })
+      .catch((err) => {
+        setError('fetch');
+        console.log(err);
+      })
+      .finally(() => setLoading(false));
   };
 
-  const deleteTodo = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:3333/api/todo/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Nie udało się ukończyć!');
-      }
-      setError('');
-      fetchTodos();
-    } catch (error) {
-      console.log(error);
-      setError(`todo-${id}`);
-    }
+  const deleteTodo = (id) => {
+    RequestHandler('DELETE', id)
+      .then(() => {
+        setError('');
+        fetchTodos();
+      })
+      .catch(() => setError(`todo-${id}`));
   };
 
-  const finishedTodo = async (id) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3333/api/todo/${id}/markAsDone`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error('Nie udało się ukończyć!');
-      }
-      setError('');
-      fetchTodos();
-    } catch (error) {
-      console.log(error);
-      setError(`todo-${id}`);
-    }
+  const finishedTodo = (id) => {
+    RequestHandler('PUT', `${id}/markAsDone`)
+      .then(() => {
+        setError('');
+        fetchTodos();
+      })
+      .catch(() => setError(`todo-${id}`));
   };
 
   const editTodo = async (id) => {
-    const title = newTitle;
-    const note = newNote;
-
-    try {
-      const response = await fetch(`http://localhost:3333/api/todo/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, note }),
-      });
-      if (!response.ok) {
-        throw new Error('Nie udało się ukończyć!');
-      }
-      clearInputs();
-      setEdit(false);
-      fetchTodos();
-    } catch (error) {
-      console.log(error);
-      setError('post');
-    }
+    RequestHandler('PUT', id, values)
+      .then(() => {
+        clearInputs();
+        setEdit(false);
+        fetchTodos();
+      })
+      .catch(() => setError('post'));
   };
 
-  const addTodo = async (e) => {
-    const title = newTitle;
-    const author = newAuthor;
-    const note = newNote;
-
+  const addTodo = (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch('http://localhost:3333/api/todo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          author,
-          note,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Wystąpił błąd, spróbuj ponownie!');
-      }
-
-      clearInputs();
-      setForm(false);
-      fetchTodos();
-    } catch (error) {
-      console.log(error);
-      setError('post');
-    }
+    RequestHandler('POST', '', values)
+      .then(() => {
+        clearInputs();
+        setForm(false);
+        fetchTodos();
+      })
+      .catch(() => setError('post'));
   };
 
   useEffect(() => {
@@ -169,10 +117,9 @@ export const TodoWithServer = () => {
                     <label htmlFor="title">Tytuł</label>
                     <input
                       type="text"
-                      id="title"
                       name="title"
                       defaultValue={todo.title}
-                      onChange={(e) => setNewTitle(e.target.value)}
+                      onChange={(e) => handleValue(e, 'title')}
                       required
                     />
                   </div>
@@ -180,11 +127,8 @@ export const TodoWithServer = () => {
                     <label htmlFor="note">Treść</label>
                     <textarea
                       name="note"
-                      id="note"
-                      cols="30"
-                      rows="10"
                       defaultValue={todo.note}
-                      onChange={(e) => setNewNote(e.target.value)}
+                      onChange={(e) => handleValue(e, 'note')}
                       required
                     ></textarea>
                   </div>
@@ -245,7 +189,7 @@ export const TodoWithServer = () => {
                   </div>
                   <section>
                     {todos.map((todo) => (
-                      <div className='todo-container' key={Math.random()}>
+                      <div className="todo-container" key={todo.id}>
                         <h2>{todo.title}</h2>
                         <p>{todo.note}</p>
                         <p>{todo.author}</p>
@@ -255,6 +199,7 @@ export const TodoWithServer = () => {
                             <button onClick={() => deleteTodo(todo.id)}>
                               Delete
                             </button>
+                            <span>{todo.doneDate}</span>
                           </>
                         ) : (
                           <>
@@ -288,9 +233,8 @@ export const TodoWithServer = () => {
                   <label htmlFor="title">Tytuł</label>
                   <input
                     type="text"
-                    id="title"
                     name="title"
-                    onChange={(e) => setNewTitle(e.target.value)}
+                    onChange={(e) => handleValue(e, 'title')}
                     required
                   />
                 </div>
@@ -298,9 +242,8 @@ export const TodoWithServer = () => {
                   <label htmlFor="author">Autor</label>
                   <input
                     type="text"
-                    id="author"
                     name="author"
-                    onChange={(e) => setNewAuthor(e.target.value)}
+                    onChange={(e) => handleValue(e, 'author')}
                     required
                   />
                 </div>
@@ -308,10 +251,7 @@ export const TodoWithServer = () => {
                   <label htmlFor="note">Treść</label>
                   <textarea
                     name="note"
-                    id="note"
-                    cols="30"
-                    rows="10"
-                    onChange={(e) => setNewNote(e.target.value)}
+                    onChange={(e) => handleValue(e, 'note')}
                     required
                   ></textarea>
                 </div>
