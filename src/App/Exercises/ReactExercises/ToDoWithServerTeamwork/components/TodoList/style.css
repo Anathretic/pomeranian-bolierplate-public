@@ -1,0 +1,7 @@
+.todo-list-wrapper .heading {
+    display: flex;
+}
+
+.todo-list-wrapper .add-button {
+    max-width: 100px;
+}
