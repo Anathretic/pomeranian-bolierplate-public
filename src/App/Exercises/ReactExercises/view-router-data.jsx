@@ -7,6 +7,7 @@ import { ReactIfStatementsMoreOrLessMetaData } from './ReactIfStatementsMoreOrLe
 import { ReactTryCatchAndFinallyMetaData } from './TryCatchAndFinally/router-data';
 import { ReactTodoWithServerMetaData } from './ToDoWithServer/router-data';
 import { ReactTodoWithServerTeamworkMetaData } from './ToDoWithServerTeamwork/router-data';
+import { ReactFormsMetaData } from './Forms/router-data';
 
 export const blockRouterMetaData = [
   SubRouteExampleMetaData,
@@ -16,5 +17,6 @@ export const blockRouterMetaData = [
   ReactTryCatchAndFinallyMetaData,
   ReactTodoWithServerMetaData,
   ReactTodoWithServerTeamworkMetaData,
+  ReactFormsMetaData,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
