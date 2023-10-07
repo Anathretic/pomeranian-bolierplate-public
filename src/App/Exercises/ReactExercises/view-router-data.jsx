@@ -8,6 +8,7 @@ import { ReactTryCatchAndFinallyMetaData } from './TryCatchAndFinally/router-dat
 import { ReactTodoWithServerMetaData } from './ToDoWithServer/router-data';
 import { ReactTodoWithServerTeamworkMetaData } from './ToDoWithServerTeamwork/router-data';
 import { ReactFormsMetaData } from './Forms/router-data';
+import { ReactFormExampleMetaData } from './FormExample/router-data';
 
 export const blockRouterMetaData = [
   SubRouteExampleMetaData,
@@ -18,5 +19,6 @@ export const blockRouterMetaData = [
   ReactTodoWithServerMetaData,
   ReactTodoWithServerTeamworkMetaData,
   ReactFormsMetaData,
+  ReactFormExampleMetaData,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
