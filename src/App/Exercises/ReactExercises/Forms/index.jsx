@@ -4,17 +4,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+  /^(?<!\w)(\(?(\+|00)?48\)?)?[ -]?\d{3}[ -]?\d{3}[ -]?\d{3}(?!\w)$/;
+
+const passwordRegExp =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const schema = yup.object({
   course: yup
     .string()
     .oneOf(['10', '20'], 'Wybierz kurs!')
     .required('To pole jest wymagane!'),
-  payMethod: yup
+  payMethod: yup.string().required('To pole jest wymagane!'),
+  extraOption: yup
     .array()
-    .min(1, 'Wybierz metodę płatności!')
-    .max(1, 'Możesz wybrać tylko jedną!')
+    .min(1, 'Wybierz chociaż jedno!')
     .of(yup.string().required())
     .required('To pole jest wymagane!'),
   name: yup
@@ -42,7 +45,30 @@ const schema = yup.object({
     .string()
     .min(35, 'Min. 35 znaków')
     .required('To pole jest wymagane!'),
-  createAccount: yup.boolean().default(false),
+  createAccount: yup.boolean(),
+  password: yup.string().when('createAccount', {
+    is: true,
+    then: () =>
+      yup
+        .string()
+        .matches(
+          passwordRegExp,
+          'Hasło powinno zawierać conajmniej 1 małą literę, 1 dużą literę, 1 znak specjalny i musi mieć min. 8 znaków!'
+        ),
+  }),
+  checkPassword: yup.string().when('createAccount', {
+    is: true,
+    then: () =>
+      yup
+        .string()
+        .oneOf([yup.ref('password'), null], 'Hasła muszą się zgadzać!')
+        .required('To pole jest wymagane!'),
+  }),
+  regulations: yup
+    .boolean()
+    .oneOf([true], 'Pole obowiązkowe!')
+    .required('To pole jest wymagane!'),
+  newsletter: yup.boolean(),
 });
 
 export function Forms() {
@@ -54,7 +80,7 @@ export function Forms() {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      payMethod: [],
+      extraOption: [],
     },
   });
 
@@ -64,64 +90,108 @@ export function Forms() {
     <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '350px' }}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="course">Wybierz produkt:</label>
-        <select {...register('course')}>
+        <select id="course" {...register('course')}>
           <option value="0">wybierz kurs</option>
           <option value="10">kurs front-end</option>
           <option value="20">kurs-backend</option>
         </select>
-        <p style={{ color: 'red' }}>{errors.course?.message}</p>
+        {errors.course && (
+          <p style={{ color: 'red' }}>{errors.course?.message}</p>
+        )}
       </div>
 
-      <div
+      <fieldset
         style={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
-        <label htmlFor="blik">blik</label>
-        <input type="checkbox" {...register('payMethod')} />
-        <label htmlFor="paypal">paypal</label>
-        <input type="checkbox" {...register('payMethod')} />
-        <label htmlFor="traditional">tradycyjny przelew</label>
-        <input type="checkbox" {...register('payMethod')} />
-        <p style={{ color: 'red' }}>{errors.payMethod?.message}</p>
-      </div>
+        <legend>Wybierz formę płatności</legend>
+        <label>
+          <input type="radio" {...register('payMethod')} />
+          blik
+        </label>
+        <label>
+          <input type="radio" {...register('payMethod')} />
+          paypal
+        </label>
+        <label>
+          <input type="radio" {...register('payMethod')} />
+          tradycyjny przelew
+        </label>
+        {errors.payMethod && (
+          <p style={{ color: 'red' }}>{errors.payMethod?.message}</p>
+        )}
+      </fieldset>
+
+      <fieldset
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <legend>Opcje dodatkowe do zamówienia</legend>
+        <label>
+          <input type="checkbox" {...register('extraOption')} />
+          ustawienia środowiska
+        </label>
+        <label>
+          <input type="checkbox" {...register('extraOption')} />
+          intro do GitHuba
+        </label>
+        <label>
+          <input type="checkbox" {...register('extraOption')} />
+          materiały dodatkowe
+        </label>
+        {errors.extraOption && (
+          <p style={{ color: 'red' }}>{errors.extraOption?.message}</p>
+        )}
+      </fieldset>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="name">Imię i nazwisko:</label>
-        <input {...register('name')} />
-        <p style={{ color: 'red' }}>{errors.name?.message}</p>
+        <input id="name" {...register('name')} />
+        {errors.name && <p style={{ color: 'red' }}>{errors.name?.message}</p>}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="nick">Twój pseudonim:</label>
-        <input {...register('nick')} />
-        <p style={{ color: 'red' }}>{errors.nick?.message}</p>
+        <input id="nick" {...register('nick')} />
+        {errors.nick && <p style={{ color: 'red' }}>{errors.nick?.message}</p>}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="address">Adres do wysyłki:</label>
-        <input {...register('address')} />
-        <p style={{ color: 'red' }}>{errors.address?.message}</p>
+        <input id="address" {...register('address')} />
+        {errors.address && (
+          <p style={{ color: 'red' }}>{errors.address?.message}</p>
+        )}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="email">Adres e-mail:</label>
-        <input {...register('email')} />
-        <p style={{ color: 'red' }}>{errors.email?.message}</p>
+        <input id="email" {...register('email')} />
+        {errors.email && (
+          <p style={{ color: 'red' }}>{errors.email?.message}</p>
+        )}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="number">Numer kontaktowy</label>
-        <input {...register('number')} />
-        <p style={{ color: 'red' }}>{errors.number?.message}</p>
+        <input id="number" {...register('number')} />
+        {errors.number && (
+          <p style={{ color: 'red' }}>{errors.number?.message}</p>
+        )}
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="moreInfo">Dodatkowe uwagi do zamówienia</label>
-        <textarea {...register('moreInfo')} />
-        <p style={{ color: 'red' }}>{errors.moreInfo?.message}</p>
+        <textarea id="moreInfo" {...register('moreInfo')} />
+        {errors.moreInfo && (
+          <p style={{ color: 'red' }}>{errors.moreInfo?.message}</p>
+        )}
       </div>
 
       <div
@@ -131,9 +201,65 @@ export function Forms() {
           justifyContent: 'center',
         }}
       >
-        <label htmlFor="checkbox">zakładam konto</label>
-        <input type="checkbox" {...register('createAccount')} />
-        <p style={{ color: 'red' }}>{errors.createAccount?.message}</p>
+        <label>
+          <input type="checkbox" {...register('createAccount')} />
+          zakładam konto
+        </label>
+        {errors.createAccount && (
+          <p style={{ color: 'red' }}>{errors.createAccount?.message}</p>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <label htmlFor="password">Moje hasło:</label>
+        <input id="password" type="password" {...register('password')} />
+        {errors.password && (
+          <p style={{ color: 'red' }}>{errors.password?.message}</p>
+        )}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <label htmlFor="checkPassword">Powtórz hasło:</label>
+        <input
+          id="checkPassword"
+          type="password"
+          {...register('checkPassword')}
+        />
+        {errors.checkPassword && (
+          <p style={{ color: 'red' }}>{errors.checkPassword?.message}</p>
+        )}
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <label>
+          <input type="checkbox" {...register('regulations')} />
+          akceptuję regulamin
+        </label>
+        {errors.regulations && (
+          <p style={{ color: 'red' }}>{errors.regulations?.message}</p>
+        )}
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <label>
+          <input type="checkbox" {...register('newsletter')} />
+          zapisuję się na listę mailignową
+        </label>
+        {errors.newsletter && (
+          <p style={{ color: 'red' }}>{errors.newsletter?.message}</p>
+        )}
       </div>
 
       <input type="submit" />
