@@ -9,6 +9,7 @@ import { ReactTodoWithServerMetaData } from './ToDoWithServer/router-data';
 import { ReactTodoWithServerTeamworkMetaData } from './ToDoWithServerTeamwork/router-data';
 import { ReactFormsMetaData } from './Forms/router-data';
 import { ReactFormExampleMetaData } from './FormExample/router-data';
+import { ReactAuthFirebaseMetaData } from './AuthFirebase/router-data';
 
 export const blockRouterMetaData = [
   SubRouteExampleMetaData,
@@ -20,5 +21,6 @@ export const blockRouterMetaData = [
   ReactTodoWithServerTeamworkMetaData,
   ReactFormsMetaData,
   ReactFormExampleMetaData,
+  ReactAuthFirebaseMetaData,
 ];
 export const blockRouterData = getParsedRouterDataList(blockRouterMetaData);
