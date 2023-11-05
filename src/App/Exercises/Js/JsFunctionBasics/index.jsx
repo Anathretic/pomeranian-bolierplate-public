@@ -61,12 +61,12 @@ function example() {
 
   // Rekurencja to funkcja, która wywołuje samą siebie
 
-  // const addNumbersTo = (value) => {
-  //   if (value === 1) return 1;
-  //   return value + addNumbersTo(value - 1);
-  // };
+  const addNumbersTo = (value) => {
+    if (value === 1) return 1;
+    return value + addNumbersTo(value - 1);
+  };
   console.time('Rekurencja');
-  // console.log('addNumbersTo(100)', addNumbersTo(10000));
+  console.log('addNumbersTo(10)', addNumbersTo(10));
   console.timeEnd('Rekurencja');
 
   // Bez rekurencji
@@ -75,7 +75,7 @@ function example() {
       .fill(0)
       .reduce((prev, _, index) => prev + index + 1, 0);
   console.time('Bez rekurencji - reduce');
-  console.log('addNumbersToReduce', addNumbersToReduce(10000));
+  console.log('addNumbersToReduce', addNumbersToReduce(10));
   console.timeEnd('Bez rekurencji - reduce');
 
   // Argumenty funkcji ----------------------------------------
